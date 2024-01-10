@@ -1,0 +1,16 @@
+- name: Telnet to the system
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Telnet to the system
+      command: telnet telnet1
+      register: telnet_result
+
+    - name: Handle Telnet Interaction
+      expect:
+        command: echo "{{ telnet_result.stdout_lines | join('\n') }}"
+        responses:
+          'login:': 'root\n'
+          'Password:': '123456\n'
+          '#': 'date\n'
+      delegate_to: localhost
