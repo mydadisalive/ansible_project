@@ -6,8 +6,13 @@
     ansible_become_pass: "123456"
 
   tasks:
+    - name: Copy custom index.html file
+      copy:
+        src: index.html  # Assuming the index.html is in the current directory
+        dest: /var/www/html/index.html  # Adjust the destination based on your Nginx configuration
+
     - name: Ensure Nginx is installed
-      apt:
+      package:
         name: nginx
         state: present
 
