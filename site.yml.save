@@ -30,3 +30,7 @@
         content: "OS: {{ ansible_distribution }} {{ ansible_distribution_major_version }} ({{ ansible_distribution_release }})\n"
         dest: /tmp/os_info.txt
 
+    - name: Copy OS info to final destination
+      copy:
+        src: /tmp/os_info.txt
+        dest: /patfile.txt

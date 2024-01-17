@@ -1,16 +1,25 @@
-- name: Telnet to the system
-  hosts: localhost
-  gather_facts: false
-  tasks:
-    - name: Telnet to the system
-      command: telnet telnet1
-      register: telnet_result
+---
+- name: Telnet Connection Playbook
+  hosts: telnet_servers
+  gather_facts: no  # Since Telnet doesn't require facts gathering
+  connection: local  # Use a local connection
 
-    - name: Handle Telnet Interaction
-      expect:
-        command: echo "{{ telnet_result.stdout_lines | join('\n') }}"
-        responses:
-          'login:': 'root\n'
-          'Password:': '123456\n'
-          '#': 'date\n'
-      delegate_to: localhost
+  tasks:
+    - name: Install ansi2txt (aha)
+      apt:
+        name: aha
+        state: present
+      become: true
+
+    - name: Telnet Connection
+      shell:
+        cmd: |
+          { sleep 1; echo "root"; sleep 1; echo "123456"; sleep 1; echo "ls"; sleep 1; echo "uptime"; sleep 1; } | telnet {{ inventory_hostname }} | aha --no-header > telnet_output_{{ inventory_hostname }}.html
+      register: telnet_result
+      ignore_errors: true
+
+    - name: Fetch Telnet Output to Local Machine
+      ansible.builtin.fetch:
+        src: telnet_output_{{ inventory_hostname }}.html
+        dest: results/  # Destination directory updated to "results/"
+        flat: yes
