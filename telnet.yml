@@ -14,12 +14,7 @@
     - name: Telnet Connection
       shell:
         cmd: |
-          { sleep 1; echo "root"; sleep 1; echo "123456"; sleep 1; echo "ls"; sleep 1; echo "uptime"; sleep 1; } | telnet {{ inventory_hostname }} | aha --no-header > telnet_output_{{ inventory_hostname }}.html
+          { sleep 1; echo "root"; sleep 1; echo "123456"; sleep 1; echo "pwd"; sleep 1; echo "uptime"; sleep 1; } | telnet {{ inventory_hostname }} | aha --no-header > results/telnet_output_{{ inventory_hostname }}.txt
       register: telnet_result
       ignore_errors: true
 
-    - name: Fetch Telnet Output to Local Machine
-      ansible.builtin.fetch:
-        src: telnet_output_{{ inventory_hostname }}.html
-        dest: results/  # Destination directory updated to "results/"
-        flat: yes
